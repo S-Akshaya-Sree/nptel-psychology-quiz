@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NPTEL Psychology of Learning - Practice Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            border: "hsl(var(--border))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="bg-indigo-600 text-white font-bold rounded-lg p-2 text-sm tracking-wider shadow-sm">EZPREP</div>
+        <div>
+          <h1 class="font-bold text-base sm:text-lg leading-tight">Psychology of Learning</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">NPTEL Practice • All 12 Weeks (120 Qs)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Score Pill -->
+        <div class="hidden sm:flex items-center gap-3 bg-slate-100 dark:bg-slate-800 px-3.5 py-1.5 rounded-full text-xs font-semibold">
+          <span class="text-emerald-600 dark:text-emerald-400">✓ <span id="stat-correct">0</span></span>
+          <span class="text-slate-300 dark:text-slate-600">|</span>
+          <span class="text-rose-600 dark:text-rose-400">✗ <span id="stat-wrong">0</span></span>
+          <span class="text-slate-300 dark:text-slate-600">|</span>
+          <span class="text-indigo-600 dark:text-indigo-400"><span id="stat-Accuracy">0%</span></span>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Toggle Theme">
+          <svg id="icon-sun" class="w-5 h-5 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="icon-moon" class="w-5 h-5 block dark:hidden text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Left Sidebar: Controls & Week Filter -->
+    <aside class="lg:col-span-3 space-y-6">
+      <!-- Practice Controls Card -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm space-y-4">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Quiz Settings</h2>
+        
+        <div class="space-y-2.5">
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm font-medium">Shuffle Questions</span>
+            <input type="checkbox" id="toggle-shuffle-q" class="sr-only peer">
+            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 relative"></div>
+          </label>
+
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm font-medium">Shuffle Options</span>
+            <input type="checkbox" id="toggle-shuffle-opt" class="sr-only peer">
+            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 relative"></div>
+          </label>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+          <button id="btn-reset" class="w-full py-2 px-3 text-xs font-semibold rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition">
+            Reset Progress
+          </button>
+        </div>
+      </div>
+
+      <!-- Week Selection Card -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Select Weeks</h2>
+          <div class="space-x-1">
+            <button id="btn-all-weeks" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium">All</button>
+            <span class="text-slate-300 dark:text-slate-700">•</span>
+            <button id="btn-clear-weeks" class="text-xs text-slate-500 hover:underline font-medium">None</button>
+          </div>
+        </div>
+        <div id="week-filters" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-2 gap-2">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center: Active Question Arena -->
+    <section class="lg:col-span-6 flex flex-col">
+      <div id="quiz-container" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 sm:p-7 shadow-sm flex-1 flex flex-col justify-between">
+        
+        <div>
+          <!-- Question Meta Header -->
+          <div class="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-2">
+              <span id="q-week-badge" class="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 rounded-md text-xs font-bold">
+                Week 1
+              </span>
+              <span id="q-number-badge" class="text-xs font-medium text-slate-400 dark:text-slate-500">
+                Question 1 of 120
+              </span>
+            </div>
+            <span id="q-status-badge" class="text-xs font-semibold px-2 py-0.5 rounded hidden"></span>
+          </div>
+
+          <!-- Question Text -->
+          <h3 id="q-text" class="text-base sm:text-lg font-semibold leading-relaxed mb-6 text-slate-800 dark:text-slate-100">
+            Loading question...
+          </h3>
+
+          <!-- Options List -->
+          <div id="options-container" class="space-y-3">
+            <!-- Populated via JS -->
+          </div>
+
+          <!-- Explanation Box -->
+          <div id="solution-box" class="mt-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/70 hidden">
+            <div class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-1">Answer & Reference</div>
+            <p id="solution-text" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+          </div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <button id="btn-prev" class="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition">
+            ← Previous
+          </button>
+          <span class="text-xs text-slate-400 hidden sm:inline">Use <kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700">1-4</kbd> to answer, <kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700">←/→</kbd> to navigate</span>
+          <button id="btn-next" class="flex items-center gap-1.5 px-5 py-2 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:pointer-events-none transition shadow-sm">
+            Next →
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Right Sidebar: Question Palette -->
+    <aside class="lg:col-span-3">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm sticky top-22">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Question Palette</h2>
+          <span id="palette-count" class="text-xs font-semibold text-slate-500">0/120 Answered</span>
+        </div>
+        
+        <div id="question-palette" class="grid grid-cols-5 sm:grid-cols-8 lg:grid-cols-5 gap-1.5 max-h-[380px] overflow-y-auto custom-scrollbar pr-1">
+          <!-- Populated via JS -->
+        </div>
+
+        <!-- Legend -->
+        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> Correct</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-500 inline-block"></span> Incorrect</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border-2 border-indigo-600 inline-block"></span> Current</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 inline-block"></span> Unvisited</div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script>
+    // Complete 120 Questions Database (Weeks 1 to 12)
+    const ALL_QUESTIONS = [
+      // WEEK 1
+      { id: "w1q1", week: 1, qNum: 1, q: "Learning is often seen as the contiguous causal effect of ________ on behavior.", options: ["blood", "bone density", "trauma", "experience"], ans: 3, slide: "Week-1 (Slide 03)" },
+      { id: "w1q2", week: 1, qNum: 2, q: "In order to say that learning has occurred, a hidden change in behavior must occur.", options: ["True", "False"], ans: 1, slide: "Week-1 (Slide 03)" },
+      { id: "w1q3", week: 1, qNum: 3, q: "Which of the following is not a mental construct?", options: ["skeleton", "knowledge", "representations", "associations"], ans: 0, slide: "Week-1 (Slide 04)" },
+      { id: "w1q4", week: 1, qNum: 4, q: "Learning changes the ________ structure of the brain through the process of continuous interactions between the learner and the external environment.", options: ["physical", "social", "biological", "none of the given"], ans: 0, slide: "Week-1 (Slide 04)" },
+      { id: "w1q5", week: 1, qNum: 5, q: "________ shapes the learning process.", options: ["Only thoughts", "Only emotions", "Both thoughts and emotions", "Neither thoughts nor emotions"], ans: 2, slide: "Week-1 (Slide 07)" },
+      { id: "w1q6", week: 1, qNum: 6, q: "Watson's work included the famous Little Albert experiment in which he conditioned a small child to ________ a white rat.", options: ["fear", "love", "hate", "play with"], ans: 0, slide: "Week-1 (Slide 07)" },
+      { id: "w1q7", week: 1, qNum: 7, q: "Behaviorism dominated psychology for much of the early ________ century.", options: ["20th", "19th", "18th", "17th"], ans: 0, slide: "Week-1 (Slide 07)" },
+      { id: "w1q8", week: 1, qNum: 8, q: "The state of \"conscious incompetence\" may be valuable ________ of a learning experience.", options: ["at the end", "in the middle", "2 years after the end", "at the start"], ans: 3, slide: "Week-1 (Slide 11)" },
+      { id: "w1q9", week: 1, qNum: 9, q: "Which of the following is not an outcome of effective e-learning?", options: ["wider range of strategies", "more reflective approach", "more positive emotions towards learning", "more disconnected knowledge"], ans: 3, slide: "Week-1 (Slide 14)" },
+      { id: "w1q10", week: 1, qNum: 10, q: "Instrumental conditioning is an example of ________ learning.", options: ["sensitization", "habituation", "associative", "meaningful"], ans: 2, slide: "Week-1 (Slide 24)" },
+
+      // WEEK 2
+      { id: "w2q1", week: 2, qNum: 1, q: "The three major types of learning described by ________ psychology are classical conditioning, operant conditioning and observational learning.", options: ["cognitive", "behavioral", "emotional", "evolutionary"], ans: 1, slide: "Week-2 (Slide 02)" },
+      { id: "w2q2", week: 2, qNum: 2, q: "According to the view of Watson, psychology is ________.", options: ["subjective", "only descriptive", "experimental", "about internal mental processes that cannot be measured and observed"], ans: 2, slide: "Week-2 (Slide 03)" },
+      { id: "w2q3", week: 2, qNum: 3, q: "________ is given by Ivan Pavlov.", options: ["Operant conditioning", "Functional conditioning", "Classical conditioning", "Modern conditioning"], ans: 2, slide: "Week-2 (Slide 05)" },
+      { id: "w2q4", week: 2, qNum: 4, q: "The process by which organisms learn to respond to certain stimuli but not to others is known as ________.", options: ["stimulus generalization", "stimulus appreciation", "stimulus discrimination", "stimulus differentiation"], ans: 2, slide: "Week-2 (Slide 11)" },
+      { id: "w2q5", week: 2, qNum: 5, q: "Higher-order conditioning is intrinsically weaker than its first-order counterpart.", options: ["True", "False"], ans: 0, slide: "Week-2 (Slide 12)" },
+      { id: "w2q6", week: 2, qNum: 6, q: "________ is the process of gradually changing the quality of a response.", options: ["Shaping", "Modeling", "Cueing", "Shifting"], ans: 0, slide: "Week-2 (Slide 23)" },
+      { id: "w2q7", week: 2, qNum: 7, q: "The works of ________ were instrumental in engendering the dramatic shift from behaviorism to cognitive theories.", options: ["Edward C. Tolman", "Jean Piaget", "German Gestalt", "All of the given"], ans: 3, slide: "Week-2 (Slide 39)" },
+      { id: "w2q8", week: 2, qNum: 8, q: "________ intelligence is the ability to perceive the visual-spatial world accurately and involves sensitivity to color, line, shape, form, space, and the potential for recognizing and manipulating the patterns of spaces.", options: ["Interpersonal", "Spatial", "Bodily-kinesthetic", "Linguistic"], ans: 1, slide: "Week-2 (Slide 48)" },
+      { id: "w2q9", week: 2, qNum: 9, q: "Sternberg proposed his theory in 1985 as an alternative to the idea of the ________.", options: ["general intelligence factor", "multiple intelligences", "specific intelligence factor", "unconscious intelligence"], ans: 0, slide: "Week-2 (Slide 51)" },
+      { id: "w2q10", week: 2, qNum: 10, q: "Which of the following is not a kind of product in the structure of intellect model?", options: ["symbolic", "classes", "systems", "implications"], ans: 0, slide: "Week-2 (Slide 79)" },
+
+      // WEEK 3
+      { id: "w3q1", week: 3, qNum: 1, q: "The connections between nerve cells are called ________.", options: ["systems", "syntaxes", "neurons", "synapses"], ans: 3, slide: "Week-3 (Slide 02)" },
+      { id: "w3q2", week: 3, qNum: 2, q: "In order to create a ________, information must be changed into a usable form, which occurs through a process known as encoding.", options: ["past memory", "new imagination", "new memory", "past imagination"], ans: 2, slide: "Week-3 (Slide 03)" },
+      { id: "w3q3", week: 3, qNum: 3, q: "Calling back the stored information in response to some cue for use in a process or activity is called ________.", options: ["Retrieval", "Recall", "Recollection", "All of the given"], ans: 3, slide: "Week-3 (Slide 03)" },
+      { id: "w3q4", week: 3, qNum: 4, q: "For many with ________ deficits, reading facial expressions and knowing how to respond are confusing daily challenges.", options: ["memory", "intelligence", "social cognition", "biological cognition"], ans: 2, slide: "Week-3 (Slide 08)" },
+      { id: "w3q5", week: 3, qNum: 5, q: "The Information Processing View of Learning assumes that there are limits to how much information can be processed at each stage.", options: ["True", "False"], ans: 0, slide: "Week-3 (Slide 09)" },
+      { id: "w3q6", week: 3, qNum: 6, q: "The Information Processing View of Learning assumes that information process is involved in ________.", options: ["forgetting", "remembering", "perceiving", "All of the given"], ans: 3, slide: "Week-3 (Slide 09)" },
+      { id: "w3q7", week: 3, qNum: 7, q: "The capacity of the sensory register is ________.", options: ["very small", "very large", "7 +/- 2 chunks", "unlimited"], ans: 1, slide: "Week-3 (Slide 14)" },
+      { id: "w3q8", week: 3, qNum: 8, q: "Most children do not begin to engage in the process of rehearsal on their own until about age ________.", options: ["seven", "two", "thirteen", "one"], ans: 0, slide: "Week-3 (Slide 16)" },
+      { id: "w3q9", week: 3, qNum: 9, q: "________ provides an interface between the sub-systems of working memory and the part of long term memory specialized for episodic memory.", options: ["Phonological loop", "Visuo-spatial sketchpad", "Retrieval buffer", "Episodic buffer"], ans: 3, slide: "Week-3 (Slide 27)" },
+      { id: "w3q10", week: 3, qNum: 10, q: "Memories of specific episodes of one's life refers to ________.", options: ["declarative memory", "experimental episodic memory", "autobiographical episodic memory", "procedural memory"], ans: 2, slide: "Week-3 (Slide 34)" },
+
+      // WEEK 4
+      { id: "w4q1", week: 4, qNum: 1, q: "________ thinking is the ability to create mental representations of objects, places, events, or people in your mind.", options: ["General", "Creative", "Divergent", "Symbolic"], ans: 3, slide: "Week-4 (Slide 03)" },
+      { id: "w4q2", week: 4, qNum: 2, q: "We compare new information to our ________ of the person, place, or thing, so we know how to categorize the new information mentally.", options: ["protofit", "protobite", "prototype", "none of the given"], ans: 2, slide: "Week-4 (Slide 04)" },
+      { id: "w4q3", week: 4, qNum: 3, q: "Which of the following is not true?", options: ["Thinking is a higher mental process", "Thinking is a sub-vocal talking", "Thinking is fulfilling a need or problem solving", "Thinking is only done in verbal symbols"], ans: 3, slide: "Week-4 (Slide 06)" },
+      { id: "w4q4", week: 4, qNum: 4, q: "Mental images are ________.", options: ["Auditory", "Visual", "Gustatory", "All of the given"], ans: 3, slide: "Week-4 (Slide 07)" },
+      { id: "w4q5", week: 4, qNum: 5, q: "________ organize complex phenomena into simpler, easily understandable, and usable categories and help to solve our problems.", options: ["Concepts", "Propositions", "Constructs", "Components"], ans: 0, slide: "Week-4 (Slide 08)" },
+      { id: "w4q6", week: 4, qNum: 6, q: "The lowermost level of Bloom's taxonomy is ________.", options: ["remember", "apply", "understand", "analyze"], ans: 0, slide: "Week-4 (Slide 13)" },
+      { id: "w4q7", week: 4, qNum: 7, q: "The psychomotor domain of the Bloom's taxonomy is concerned with ________.", options: ["Biological makeup", "Thoughts and beliefs", "Feelings and emotions", "Skilled behavior"], ans: 3, slide: "Week-4 (Slide 17)" },
+      { id: "w4q8", week: 4, qNum: 8, q: "Which of the following is an example of meta-cognition skills?", options: ["Ignoring your limits", "Self-monitoring", "Skimming all important information", "All of the given"], ans: 1, slide: "Week-4 (Slide 24)" },
+      { id: "w4q9", week: 4, qNum: 9, q: "________ critical thinking skill helps you analyze and process information to come to an unbiased conclusion.", options: ["Open-mindedness", "Self-regulation", "Self-control", "Observation"], ans: 0, slide: "Week-4 (Slide 32)" },
+      { id: "w4q10", week: 4, qNum: 10, q: "The inspiration phase of the creative thinking process refers to the ________ stage.", options: ["Incubation", "Insight", "Evaluation", "Preparation"], ans: 3, slide: "Week-4 (Slide 51)" },
+
+      // WEEK 5
+      { id: "w5q1", week: 5, qNum: 1, q: "Which of the following is true about motivation?", options: ["It is a physical impulse", "It is an external process", "It has a willingness to activate but not channel the attitudes of learners", "None of the given"], ans: 3, slide: "Week-5 (Slide 02)" },
+      { id: "w5q2", week: 5, qNum: 2, q: "The term \"motivation\" comes from a ________ word.", options: ["Greek", "Latin", "Hindi", "Bengali"], ans: 1, slide: "Week-5 (Slide 04)" },
+      { id: "w5q3", week: 5, qNum: 3, q: "It is called extrinsic motivation if causal factor is ________.", options: ["curiosity", "social pressure", "self-satisfaction", "needs"], ans: 1, slide: "Week-5 (Slide 05)" },
+      { id: "w5q4", week: 5, qNum: 4, q: "________ motivation is considered to be more crucial for students as it is associated with deep learning, better performance and self-efficacy.", options: ["Intrinsic", "Extrinsic", "Introjected regulation", "None of the given"], ans: 0, slide: "Week-5 (Slide 07)" },
+      { id: "w5q5", week: 5, qNum: 5, q: "________ proposed that there are three primary drives that drive human behavior.", options: ["Hull", "Watson", "Piaget", "Gestalt"], ans: 0, slide: "Week-5 (Slide 12)" },
+      { id: "w5q6", week: 5, qNum: 6, q: "Expectancy Theory of Motivation was developed by ________.", options: ["Vroom", "Hull", "Murray", "None of the given"], ans: 0, slide: "Week-5 (Slide 21)" },
+      { id: "w5q7", week: 5, qNum: 7, q: "An example of ________ is thinking, \"If I work hard I can achieve the targets my boss has set for me\".", options: ["purposeful", "valence", "instrumentality", "expectancy"], ans: 3, slide: "Week-5 (Slide 23)" },
+      { id: "w5q8", week: 5, qNum: 8, q: "In SMART goals, T stands for ________.", options: ["Temporary", "Time-based", "Tough", "Testing"], ans: 1, slide: "Week-5 (Slide 27)" },
+      { id: "w5q9", week: 5, qNum: 9, q: "Friendship is a ________ need in Maslow's hierarchy.", options: ["Love and belonging", "Esteem", "Physiological", "Safety"], ans: 0, slide: "Week-5 (Slide 31-32)" },
+      { id: "w5q10", week: 5, qNum: 10, q: "________ theory differentiates between autonomous motivation and controlled motivation.", options: ["Arousal", "Goal-setting", "Need hierarchy", "Self-determination"], ans: 3, slide: "Week-5 (Slide 37)" },
+
+      // WEEK 6
+      { id: "w6q1", week: 6, qNum: 1, q: "According to Daniel Goleman, ________ component of emotional intelligence focuses on how we handle relationships with others.", options: ["self-awareness", "motivation", "empathy", "emotional regulation"], ans: 2, slide: "Week-6 (Slide 02)" },
+      { id: "w6q2", week: 6, qNum: 2, q: "Emotional intelligence can be considered a type of ________ intelligence.", options: ["academic", "genetic", "social", "external"], ans: 2, slide: "Week-6 (Slide 03)" },
+      { id: "w6q3", week: 6, qNum: 3, q: "Noticing a difficult emotion and slowing down or resisting any impulsive action that may follow highlights ________ component of emotional intelligence.", options: ["Self-regulation", "Motivation", "Emotional literacy", "Empathy"], ans: 0, slide: "Week-6 (Slide 04)" },
+      { id: "w6q4", week: 6, qNum: 4, q: "The following are signs of emotional intelligence, except ________.", options: ["strong sense of curiosity", "holding onto mistakes", "ability to manage emotions in difficult situations", "self-confidence"], ans: 1, slide: "Week-6 (Slide 07)" },
+      { id: "w6q5", week: 6, qNum: 5, q: "Perceiving emotions means ________.", options: ["Ignoring signals", "Understanding only what somebody is saying to you", "Understanding only somebody's facial expression", "Understanding both verbal and nonverbal signals"], ans: 3, slide: "Week-6 (Slide 11)" },
+      { id: "w6q6", week: 6, qNum: 6, q: "________ suggests that 10 distinct components provide the scaffolding of emotionally and socially intelligent behaviors.", options: ["Bar-On", "Goleman", "Salovey", "Mayer"], ans: 0, slide: "Week-6 (Slide 15)" },
+      { id: "w6q7", week: 6, qNum: 7, q: "Which of the following is a facilitator of EQ?", options: ["optimism", "happiness", "independence", "all of the given"], ans: 3, slide: "Week-6 (Slide 18)" },
+      { id: "w6q8", week: 6, qNum: 8, q: "________ is a strategy for improving one's self-awareness.", options: ["rejecting feedback", "using critical self-talk daily", "developing a fixed mindset", "pursuing one's passion"], ans: 3, slide: "Week-6 (Slide 20)" },
+      { id: "w6q9", week: 6, qNum: 9, q: "Having students create autobiographies is an example of creating opportunities for ________.", options: ["emotional labor", "emotional contagion", "metacognition", "none of the given"], ans: 2, slide: "Week-6 (Slide 23)" },
+      { id: "w6q10", week: 6, qNum: 10, q: "Which of the following is not true about management of emotions?", options: ["It is essentially a private act", "It is directly regulated by others", "It is influenced by cultural norms", "It is influenced by what society defines as appropriate to feel and express"], ans: 1, slide: "Week-6 (Slide 30)" },
+
+      // WEEK 7
+      { id: "w7q1", week: 7, qNum: 1, q: "Which of the following is false about learning according to Gagne's definition?", options: ["It is a change in human disposition", "It persists over a period of time", "It is simply ascribable to processes of growth", "None of the above"], ans: 2, slide: "Week-7 (Slide 03)" },
+      { id: "w7q2", week: 7, qNum: 2, q: "Manual or physical skills come under ________ component of Bloom's taxonomy.", options: ["Cognitive", "Affective", "Psychomotor", "Physical"], ans: 2, slide: "Week-7 (Slide 04)" },
+      { id: "w7q3", week: 7, qNum: 3, q: "Reflection, learning and education was explored by ________.", options: ["Carl Rogers", "John Watson", "Benjamin Bloom", "John Dewey"], ans: 3, slide: "Week-7 (Slide 05)" },
+      { id: "w7q4", week: 7, qNum: 4, q: "The principles of ________ refer to how close in time two events must be for a bond to be formed.", options: ["behavior", "reinforcement", "repetition", "contiguity"], ans: 3, slide: "Week-7 (Slide 06)" },
+      { id: "w7q5", week: 7, qNum: 5, q: "________ gives information to learners about their success or failure concerning the task at hand.", options: ["Cognitive feedback", "Emotional feedback", "Reinforcement", "Physical feedback"], ans: 0, slide: "Week-7 (Slide 07)" },
+      { id: "w7q6", week: 7, qNum: 6, q: "The ________ orientation to learning has a quality of personal involvement—the whole person in both feeling and cognitive aspects being in the learning event.", options: ["behavioral", "cognitive", "humanistic", "social"], ans: 2, slide: "Week-7 (Slide 08)" },
+      { id: "w7q7", week: 7, qNum: 7, q: "Learning through play is ________ learning.", options: ["primary", "secondary", "passive", "active"], ans: 3, slide: "Week-7 (Slide 15)" },
+      { id: "w7q8", week: 7, qNum: 8, q: "People with ________ learning style are prone to sorting their ideas after speaking, rather than thinking ideas through before.", options: ["logical", "solitary", "visual", "auditory"], ans: 3, slide: "Week-7 (Slide 17)" },
+      { id: "w7q9", week: 7, qNum: 9, q: "Which of the following statements is false?", options: ["Effective instruction is static", "Effective instruction is eclectic", "Effective instruction is generative", "Effective instruction is interactive"], ans: 0, slide: "Week-7 (Slide 22)" },
+      { id: "w7q10", week: 7, qNum: 10, q: "In ADDIE model, I stands for ________.", options: ["instruction", "implementation", "integration", "induction"], ans: 1, slide: "Week-7 (Slide 33)" },
+
+      // WEEK 8
+      { id: "w8q1", week: 8, qNum: 1, q: "The word 'pedagogy' has been derived from the ________ word \"pedagogue\".", options: ["Latin", "Sanskrit", "Greek", "English"], ans: 2, slide: "Week-8 (Slide 03)" },
+      { id: "w8q2", week: 8, qNum: 2, q: "Which of the following statements is not true about pedagogy?", options: ["It is a method or way of teaching", "It is derived from the Greek word \"pedagogue\"", "It helps a teacher understand how learning should be facilitated.", "It harms the quality of teaching and learning."], ans: 3, slide: "Week-8 (Slide 03-05)" },
+      { id: "w8q3", week: 8, qNum: 3, q: "Pedagogy can enhance the student-teacher relationship.", options: ["True", "False"], ans: 0, slide: "Week-8 (Slide 03)" },
+      { id: "w8q4", week: 8, qNum: 4, q: "________ learning is based on the model that knowledge can be created within a population where members actively interact by sharing experiences and take on asymmetry roles.", options: ["integrative", "inquiry-based", "collaborative", "constructivist"], ans: 2, slide: "Week-8 (Slide 06)" },
+      { id: "w8q5", week: 8, qNum: 5, q: "The Pedagogical Model provides an overview of the learning cycle and breaks it down into ________ domains or phases of instruction.", options: ["five", "three", "two", "seven"], ans: 0, slide: "Week-8 (Slide 09)" },
+      { id: "w8q6", week: 8, qNum: 6, q: "Which of the following is not a type of inquiry-based approach?", options: ["confrontation", "structure", "guided", "open"], ans: 0, slide: "Week-8 (Slide 10)" },
+      { id: "w8q7", week: 8, qNum: 7, q: "In experiential learning, students are engaged ________.", options: ["intellectually", "soulfully", "socially", "all of the given"], ans: 3, slide: "Week-8 (Slide 14)" },
+      { id: "w8q8", week: 8, qNum: 8, q: "________ stage of experiential theory by Kolb focuses on planning.", options: ["concrete experience", "abstract conceptualization", "reflective observation", "active experimentation"], ans: 3, slide: "Week-8 (Slide 21)" },
+      { id: "w8q9", week: 8, qNum: 9, q: "People with a ________ learning style can often act on \"gut feeling\" and will rely on others' analysis rather than their own.", options: ["accommodating", "converging", "diverging", "assimilating"], ans: 0, slide: "Week-8 (Slide 25)" },
+      { id: "w8q10", week: 8, qNum: 10, q: "According to the ________ principle, students learn better from animation and narration than from animation and on-screen text.", options: ["multimedia", "modality", "coherence", "temporal contiguity"], ans: 1, slide: "Week-8 (Slide 45)" },
+
+      // WEEK 9
+      { id: "w9q1", week: 9, qNum: 1, q: "E-learning is any form of ________.", options: ["teaching", "training", "tutoring", "all of the given"], ans: 3, slide: "Week-9 (Slide 02)" },
+      { id: "w9q2", week: 9, qNum: 2, q: "________ is a feature of e-learning.", options: ["difficulty in access", "user friendliness", "social injustice", "closed learning"], ans: 1, slide: "Week-9 (Slide 02)" },
+      { id: "w9q3", week: 9, qNum: 3, q: "E-learning is a synonym of audio-visual learning, multimedia learning, and distance learning.", options: ["True", "False"], ans: 1, slide: "Week-9 (Slide 05)" },
+      { id: "w9q4", week: 9, qNum: 4, q: "Which of the following is not a type of e-learning?", options: ["text-driven", "interactive", "simulation", "physical"], ans: 3, slide: "Week-9 (Slide 05-06)" },
+      { id: "w9q5", week: 9, qNum: 5, q: "Which of the following is not a benefit of e-learning?", options: ["It can accommodate the need of a housewife", "People can revise the learning content as many times as they want", "It facilitates in developing and communicating new training policies", "None of the given"], ans: 3, slide: "Week-9 (Slide 06)" },
+      { id: "w9q6", week: 9, qNum: 6, q: "Good learners know ________.", options: ["What they are learning", "Why they are learning", "How they are learning", "All of the given"], ans: 3, slide: "Week-9 (Slide 12)" },
+      { id: "w9q7", week: 9, qNum: 7, q: "Learners may multitask when engaging in an online course, which could be resulting in ________.", options: ["hyperfocus", "better retrieval", "shorter attention spans", "None of the given"], ans: 2, slide: "Week-9 (Slide 19)" },
+      { id: "w9q8", week: 9, qNum: 8, q: "________ learning is the crucial determinant of successful e-learning.", options: ["passive", "retrospective", "social", "active"], ans: 3, slide: "Week-9 (Slide 13)" },
+      { id: "w9q9", week: 9, qNum: 9, q: "The brain can process 36,000 visual cues per ________.", options: ["hour", "second", "day", "year"], ans: 0, slide: "Week-9 (Slide 14)" },
+      { id: "w9q10", week: 9, qNum: 10, q: "For effective learning, online courses should ________.", options: ["use headings", "use complex language", "present long pieces of text", "use random images"], ans: 0, slide: "Week-9 (Slide 20)" },
+
+      // WEEK 10
+      { id: "w10q1", week: 10, qNum: 1, q: "During Covid-19 the world was busy in preparing 1.5 billion learners for the new normal, i.e., ________ learning.", options: ["ineffective", "physical", "remote", "experiential"], ans: 2, slide: "Week-10 (Slide 02)" },
+      { id: "w10q2", week: 10, qNum: 2, q: "To develop learner readiness for online learning, training sessions on ________ are helpful.", options: ["netiquettes", "time management", "developing study skills", "all of the given"], ans: 3, slide: "Week-10 (Slide 04)" },
+      { id: "w10q3", week: 10, qNum: 3, q: "The typical picture of a teacher being a dispenser of knowledge to the students has been replaced by that of a ________.", options: ["obstructor", "parent", "friend", "facilitator"], ans: 3, slide: "Week-10 (Slide 06)" },
+      { id: "w10q4", week: 10, qNum: 4, q: "In 2018, Global Education and Skills Forum noted that the 'future' teacher would need the 5 skills to thrive in the 21st century. Which of the following is not one of them?", options: ["Strong social skills", "Data analysis", "External focus", "Strictness"], ans: 3, slide: "Week-10 (Slide 06)" },
+      { id: "w10q5", week: 10, qNum: 5, q: "Participatory education demands ________ so as to build a needs-based approach to teaching.", options: ["creativity", "stubbornness", "reward", "none of the given"], ans: 0, slide: "Week-10 (Slide 08)" },
+      { id: "w10q6", week: 10, qNum: 6, q: "Students who consider intelligence as a malleable entity tend to focus on their obstacles instead of goals.", options: ["True", "False"], ans: 1, slide: "Week-10 (Slide 10)" },
+      { id: "w10q7", week: 10, qNum: 7, q: "Which of the following is not a principle to enhance student learning?", options: ["What students already know affects their learning", "Learning is context-based", "Students' cognitive development and learning is limited by the general stages of development.", "The acquisition of knowledge and skills in the long term depends largely on practice."], ans: 2, slide: "Week-10 (Slide 10-11)" },
+      { id: "w10q8", week: 10, qNum: 8, q: "________ feedback to students is important for learning.", options: ["Unclear", "Late", "Harsh", "Explanatory"], ans: 3, slide: "Week-10 (Slide 14)" },
+      { id: "w10q9", week: 10, qNum: 9, q: "Mastery goals are those that are geared towards the acquisition or improvement of ________.", options: ["Skills", "Number of students in a classroom", "Teacher feedback", "None of the given"], ans: 0, slide: "Week-10 (Slide 15)" },
+      { id: "w10q10", week: 10, qNum: 10, q: "The vast majority of formative assessment is ________.", options: ["Formal", "Incorrect", "Written", "informal"], ans: 3, slide: "Week-10 (Slide 44)" },
+
+      // WEEK 11
+      { id: "w11q1", week: 11, qNum: 1, q: "Social cognition has a protracted development through infancy to ________.", options: ["teenage", "old-age", "adulthood", "death"], ans: 2, slide: "Week-11 (Slide 02)" },
+      { id: "w11q2", week: 11, qNum: 2, q: "Which of the following abilities comes under social cognition?", options: ["Face processing", "Joint attention", "Theory of mind", "All of the given"], ans: 3, slide: "Week-11 (Slide 03)" },
+      { id: "w11q3", week: 11, qNum: 3, q: "Under social cognition, abilities involved in affective processing are often called ________.", options: ["hot", "cold", "white", "black"], ans: 0, slide: "Week-11 (Slide 03)" },
+      { id: "w11q4", week: 11, qNum: 4, q: "Social schemas refer to people's mental representations of social ________.", options: ["values", "memories", "skills", "patterns"], ans: 3, slide: "Week-11 (Slide 05)" },
+      { id: "w11q5", week: 11, qNum: 5, q: "During the earliest stages of development, children are very ________-centric. They see the world from their own perspective and struggle to think about how other people may view the world.", options: ["selfish", "ego", "conscious", "emotional"], ans: 1, slide: "Week-11 (Slide 06)" },
+      { id: "w11q6", week: 11, qNum: 6, q: "A theory of mind refers to a person's ability to understand and think about the ________ of other people.", options: ["behaviors", "family backgrounds", "mental states", "language"], ans: 2, slide: "Week-11 (Slide 08)" },
+      { id: "w11q7", week: 11, qNum: 7, q: "The same social behavior in one cultural setting might have a very different meaning and interpretation if it were to occur or be observed in another culture.", options: ["True", "False"], ans: 0, slide: "Week-11 (Slide 09)" },
+      { id: "w11q8", week: 11, qNum: 8, q: "Social cognitive theory by Bandura focuses on concepts of ________.", options: ["self-efficacy", "modeling", "observational learning", "all of the given"], ans: 3, slide: "Week-11 (Slide 11)" },
+      { id: "w11q9", week: 11, qNum: 9, q: "The central tenet of Bandura's social-cognitive theory is that people seek to develop a sense of ________ over the important events in their lives.", options: ["agency", "dependency", "attachment", "emotion"], ans: 0, slide: "Week-11 (Slide 13)" },
+      { id: "w11q10", week: 11, qNum: 10, q: "________ hypothesis suggests that social processes influence how information is selected, organized, integrated, and retrieved.", options: ["activation", "cognitive influence", "interaction", "social cue strength"], ans: 1, slide: "Week-11 (Slide 30)" },
+
+      // WEEK 12
+      { id: "w12q1", week: 12, qNum: 1, q: "Sustainability in economic sustainability is ________.", options: ["multidimensional", "bidimensional", "unidimensional", "none of the given"], ans: 2, slide: "Week-12 (Slide 02)" },
+      { id: "w12q2", week: 12, qNum: 2, q: "The term \"sustainable development\" was first mentioned in a book related to the 1972 UN Stockholm conference on ________.", options: ["water", "poverty", "economic crisis", "human environment"], ans: 3, slide: "Week-12 (Slide 03)" },
+      { id: "w12q3", week: 12, qNum: 3, q: "Environmental sustainability focuses on impacts of processes, products and services on ________.", options: ["water", "biodiversity", "human health", "all of the given"], ans: 3, slide: "Week-12 (Slide 05)" },
+      { id: "w12q4", week: 12, qNum: 4, q: "Which of the following does not come under social sustainability?", options: ["Labour practices", "Revenue generation", "Human rights", "Business ethics"], ans: 1, slide: "Week-12 (Slide 06-07)" },
+      { id: "w12q5", week: 12, qNum: 5, q: "SDG ________ focuses on clean water and sanitation.", options: ["1", "17", "6", "3"], ans: 2, slide: "Week-12 (Slide 09)" },
+      { id: "w12q6", week: 12, qNum: 6, q: "SDG 16 focuses on ________.", options: ["No poverty", "No hunger", "Good health", "Peace and justice"], ans: 3, slide: "Week-12 (Slide 09)" },
+      { id: "w12q7", week: 12, qNum: 7, q: "On 20 October 2020, the Higher Education Sustainability Initiative (HESI) raised the flag of higher education as a driver for sustainable development and inclusive societies on the first day of the ________ 2020.", options: ["National Sustainability Meeting", "National Teachers Meeting", "Global Childrens' Meeting", "Global Education Meeting"], ans: 3, slide: "Week-12 (Slide 14)" },
+      { id: "w12q8", week: 12, qNum: 8, q: "Education is related to all SDGs.", options: ["True", "False"], ans: 0, slide: "Week-12 (Slide 24)" },
+      { id: "w12q9", week: 12, qNum: 9, q: "Successful implementation of ESD requires a shift in focus from ________.", options: ["teaching to learning", "learning to teaching", "reading to speaking", "knowing to ignoring"], ans: 0, slide: "Week-12 (Slide 29)" },
+      { id: "w12q10", week: 12, qNum: 10, q: "________ competency is the ability to reflect on one's own role in the local community and (global) society.", options: ["collaboration", "self-awareness", "strategic", "normative"], ans: 1, slide: "Week-12 (Slide 62)" }
+    ];
+
+    // App State
+    let selectedWeeks = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    let shuffleQuestions = false;
+    let shuffleOptions = false;
+    let activePool = [];
+    let currentIndex = 0;
+    let userResponses = {}; // { [questionId]: selectedOriginalIndex }
+    let optionOrderMap = {}; // { [questionId]: [shuffledOriginalIndices] }
+
+    // DOM Elements
+    const weekFiltersEl = document.getElementById('week-filters');
+    const qWeekBadge = document.getElementById('q-week-badge');
+    const qNumberBadge = document.getElementById('q-number-badge');
+    const qStatusBadge = document.getElementById('q-status-badge');
+    const qText = document.getElementById('q-text');
+    const optionsContainer = document.getElementById('options-container');
+    const solutionBox = document.getElementById('solution-box');
+    const solutionText = document.getElementById('solution-text');
+    const paletteEl = document.getElementById('question-palette');
+    const paletteCountEl = document.getElementById('palette-count');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+
+    // Utility: Fisher-Yates Shuffle
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    // Initialize Week Filter Buttons
+    function renderWeekFilters() {
+      weekFiltersEl.innerHTML = '';
+      for (let w = 1; w <= 12; w++) {
+        const isSelected = selectedWeeks.has(w);
+        const btn = document.createElement('button');
+        btn.textContent = `Week ${w}`;
+        btn.className = `py-1.5 px-2.5 rounded-lg text-xs font-semibold border transition ${
+          isSelected
+            ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+            : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-300'
+        }`;
+        btn.onclick = () => {
+          if (selectedWeeks.has(w)) {
+            if (selectedWeeks.size > 1) selectedWeeks.delete(w);
+          } else {
+            selectedWeeks.add(w);
+          }
+          renderWeekFilters();
+          rebuildPool();
+        };
+        weekFiltersEl.appendChild(btn);
+      }
+    }
+
+    // Build / Rebuild Question Pool based on filters and shuffle state
+    function rebuildPool() {
+      let filtered = ALL_QUESTIONS.filter(q => selectedWeeks.has(q.week));
+      if (shuffleQuestions) {
+        filtered = shuffleArray(filtered);
+      }
+      activePool = filtered;
+      currentIndex = 0;
+
+      // Prepare option orders
+      optionOrderMap = {};
+      activePool.forEach(q => {
+        const indices = q.options.map((_, idx) => idx);
+        optionOrderMap[q.id] = shuffleOptions ? shuffleArray(indices) : indices;
+      });
+
+      renderAll();
+    }
+
+    // Render Current Question, Options, Stats, and Palette
+    function renderAll() {
+      if (activePool.length === 0) return;
+
+      const currentQ = activePool[currentIndex];
+      const userAns = userResponses[currentQ.id];
+      const isAnswered = userAns !== undefined;
+
+      // Header Badges
+      qWeekBadge.textContent = `Week ${currentQ.week} • Q${currentQ.qNum}`;
+      qNumberBadge.textContent = `Question ${currentIndex + 1} of ${activePool.length}`;
+
+      if (isAnswered) {
+        qStatusBadge.classList.remove('hidden');
+        if (userAns === currentQ.ans) {
+          qStatusBadge.textContent = 'Correct';
+          qStatusBadge.className = 'text-xs font-semibold px-2.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800';
+        } else {
+          qStatusBadge.textContent = 'Incorrect';
+          qStatusBadge.className = 'text-xs font-semibold px-2.5 py-0.5 rounded bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-800';
+        }
+      } else {
+        qStatusBadge.classList.add('hidden');
+      }
+
+      // Question Text
+      qText.textContent = currentQ.q;
+
+      // Render Options
+      optionsContainer.innerHTML = '';
+      const optIndices = optionOrderMap[currentQ.id] || currentQ.options.map((_, i) => i);
+      const letters = ['A', 'B', 'C', 'D'];
+
+      optIndices.forEach((origIdx, displayIdx) => {
+        const optText = currentQ.options[origIdx];
+        const btn = document.createElement('button');
+        btn.disabled = isAnswered;
+
+        let baseStyle = "w-full text-left p-3.5 sm:p-4 rounded-xl border text-sm sm:text-base font-medium transition flex items-center justify-between gap-3 ";
+        let badgeStyle = "w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition ";
+
+        if (!isAnswered) {
+          baseStyle += "border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 bg-slate-50/50 dark:bg-slate-800/40";
+          badgeStyle += "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300";
+        } else {
+          if (origIdx === currentQ.ans) {
+            // Correct Option
+            baseStyle += "border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200";
+            badgeStyle += "bg-emerald-500 text-white";
+          } else if (origIdx === userAns && userAns !== currentQ.ans) {
+            // User's Wrong Selection
+            baseStyle += "border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 text-rose-900 dark:text-rose-200";
+            badgeStyle += "bg-rose-500 text-white";
+          } else {
+            // Other unselected options
+            baseStyle += "border-slate-200 dark:border-slate-800 opacity-50 bg-slate-50/30 dark:bg-slate-900";
+            badgeStyle += "bg-slate-200 dark:bg-slate-800 text-slate-500";
+          }
+        }
+
+        btn.className = baseStyle;
+        btn.innerHTML = `
+          <div class="flex items-center gap-3.5">
+            <span class="${badgeStyle}">${letters[displayIdx]}</span>
+            <span>${optText}</span>
+          </div>
+          ${isAnswered && origIdx === currentQ.ans ? '<span class="text-emerald-600 dark:text-emerald-400 font-bold text-lg">✓</span>' : ''}
+          ${isAnswered && origIdx === userAns && userAns !== currentQ.ans ? '<span class="text-rose-600 dark:text-rose-400 font-bold text-lg">✗</span>' : ''}
+        `;
+
+        btn.onclick = () => selectAnswer(currentQ.id, origIdx);
+        optionsContainer.appendChild(btn);
+      });
+
+      // Solution Box
+      if (isAnswered) {
+        solutionBox.classList.remove('hidden');
+        solutionText.innerHTML = `Correct Answer: <strong>${currentQ.options[currentQ.ans]}</strong><br>Reference: Please go through lecture notes of <strong>${currentQ.slide}</strong> for better understanding.`;
+      } else {
+        solutionBox.classList.add('hidden');
+      }
+
+      // Navigation Buttons
+      btnPrev.disabled = currentIndex === 0;
+      btnNext.disabled = currentIndex === activePool.length - 1;
+
+      renderStatsAndPalette();
+    }
+
+    // Handle Option Selection
+    function selectAnswer(qId, origIdx) {
+      if (userResponses[qId] !== undefined) return;
+      userResponses[qId] = origIdx;
+      renderAll();
+    }
+
+    // Update Top Score Pills and Question Palette Grid
+    function renderStatsAndPalette() {
+      let correct = 0;
+      let wrong = 0;
+
+      paletteEl.innerHTML = '';
+      activePool.forEach((q, idx) => {
+        const resp = userResponses[q.id];
+        const isCurrent = idx === currentIndex;
+
+        if (resp !== undefined) {
+          if (resp === q.ans) correct++;
+          else wrong++;
+        }
+
+        const btn = document.createElement('button');
+        btn.textContent = idx + 1;
+        let classes = "h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ";
+
+        if (resp !== undefined) {
+          if (resp === q.ans) {
+            classes += "bg-emerald-500 text-white ";
+          } else {
+            classes += "bg-rose-500 text-white ";
+          }
+        } else {
+          classes += "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 ";
+        }
+
+        if (isCurrent) {
+          classes += "ring-2 ring-indigo-600 dark:ring-indigo-400 ring-offset-2 dark:ring-offset-slate-900";
+        }
+
+        btn.className = classes;
+        btn.onclick = () => {
+          currentIndex = idx;
+          renderAll();
+        };
+        paletteEl.appendChild(btn);
+      });
+
+      const totalAnswered = correct + wrong;
+      const accuracy = totalAnswered > 0 ? Math.round((correct / totalAnswered) * 100) : 0;
+
+      document.getElementById('stat-correct').textContent = correct;
+      document.getElementById('stat-wrong').textContent = wrong;
+      document.getElementById('stat-Accuracy').textContent = `${accuracy}%`;
+      paletteCountEl.textContent = `${totalAnswered}/${activePool.length} Answered`;
+    }
+
+    // Event Listeners
+    btnPrev.onclick = () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderAll();
+      }
+    };
+
+    btnNext.onclick = () => {
+      if (currentIndex < activePool.length - 1) {
+        currentIndex++;
+        renderAll();
+      }
+    };
+
+    document.getElementById('toggle-shuffle-q').onchange = (e) => {
+      shuffleQuestions = e.target.checked;
+      rebuildPool();
+    };
+
+    document.getElementById('toggle-shuffle-opt').onchange = (e) => {
+      shuffleOptions = e.target.checked;
+      rebuildPool();
+    };
+
+    document.getElementById('btn-all-weeks').onclick = () => {
+      selectedWeeks = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+      renderWeekFilters();
+      rebuildPool();
+    };
+
+    document.getElementById('btn-clear-weeks').onclick = () => {
+      selectedWeeks = new Set([1]);
+      renderWeekFilters();
+      rebuildPool();
+    };
+
+    document.getElementById('btn-reset').onclick = () => {
+      userResponses = {};
+      renderAll();
+    };
+
+    document.getElementById('theme-toggle').onclick = () => {
+      document.documentElement.classList.toggle('dark');
+    };
+
+    // Keyboard Shortcuts (1-4 for options, Left/Right arrows for navigation)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' && currentIndex < activePool.length - 1) {
+        currentIndex++;
+        renderAll();
+      } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        currentIndex--;
+        renderAll();
+      } else if (['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key) - 1;
+        const currentQ = activePool[currentIndex];
+        const optOrder = optionOrderMap[currentQ.id];
+        if (currentQ && optOrder && optOrder[idx] !== undefined) {
+          selectAnswer(currentQ.id, optOrder[idx]);
+        }
+      }
+    });
+
+    // Boot App
+    renderWeekFilters();
+    rebuildPool();
+  </script>
+</body>
+</html>
